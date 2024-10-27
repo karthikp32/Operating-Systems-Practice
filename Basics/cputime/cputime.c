@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <unistd.h>
-
+#include <stdio.h>
 
 #define SLEEP_SEC 3
 #define NUM_MULS 100000000
@@ -11,16 +11,20 @@
 
 // TODO define this struct
 struct profile_times {
-  
+  time_t start_time;
 };
 
 // TODO populate the given struct with starting information
 void profile_start(struct profile_times *t) {
-
+  t->start_time = time(NULL);
 }
 
 // TODO given starting information, compute and log differences to now
-void profile_log(struct profile_times *t) {}
+void profile_log(struct profile_times *t) {
+  time_t current_time =  time(NULL);
+  double real_time = difftime(current_time, t->start_time);
+  printf("This code took %f seconds", real_time);
+}
 
 int main(int argc, char *argv[]) {
   struct profile_times t;
