@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <sched.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/resource.h>
+#include <sys/types.h>
 
 
 #define SLEEP_SEC 3
@@ -41,6 +43,15 @@ void profile_start(struct profile_times *t) {
 
 // TODO given starting information, compute and log differences to now
 void profile_log(struct profile_times *t, int function_id) {
+
+  pid_t pid = getpid();
+  int cpu_id = sched_getcpu();
+
+    // Check for error
+  if (cpu_id == -1) {
+        perror("sched_getcpu failed");
+  }
+
   struct timeval current_time;
   if (gettimeofday(&current_time, NULL) != 0) {
         perror("gettimeofday failed");
@@ -66,9 +77,9 @@ void profile_log(struct profile_times *t, int function_id) {
       double total_elapsed_user_time = elasped_user_time_secs + elasped_user_time_micro * 1e-6; 
       double total_elapsed_kernel_time = elasped_kernel_time_secs + elasped_kernel_time_micro * 1e-6; 
 
-      printf("Real time elapsed: %.6f seconds for function %d\n", elapsed_real_time, function_id);
-      printf("User CPU time elapsed: %.6f seconds for function %d\n", total_elapsed_user_time, function_id);
-      printf("System CPU time: %.6f seconds for function %d\n\n", total_elapsed_kernel_time,  function_id);
+      printf("[pid %d cpu %d] Real time elapsed: %.6f seconds for function %d\n", pid, cpu_id, elapsed_real_time, function_id);
+      printf("[pid %d cpu %d] User CPU time elapsed: %.6f seconds for function %d\n", pid, cpu_id, total_elapsed_user_time, function_id);
+      printf("[pid %d cpu %d] System CPU time: %.6f seconds for function %d\n\n", pid, cpu_id, total_elapsed_kernel_time,  function_id);
   }
 }
 
