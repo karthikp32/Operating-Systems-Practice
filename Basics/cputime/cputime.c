@@ -57,6 +57,7 @@ void profile_log(struct profile_times *t, int function_id) {
         perror("gettimeofday failed");
   }
 
+  double time_now_about = current_time.tv_sec + current_time.tv_usec * 1e-6;
   double elapsed_real_time_secs = current_time.tv_sec - t->curr_time.tv_sec;
   double elapsed_real_time_micro = current_time.tv_usec - t->curr_time.tv_usec;
   double elapsed_real_time = elapsed_real_time_secs + elapsed_real_time_micro * 1e-6;
@@ -77,9 +78,9 @@ void profile_log(struct profile_times *t, int function_id) {
       double total_elapsed_user_time = elasped_user_time_secs + elasped_user_time_micro * 1e-6; 
       double total_elapsed_kernel_time = elasped_kernel_time_secs + elasped_kernel_time_micro * 1e-6; 
 
-      printf("[pid %d cpu %d] Real time elapsed: %.6f seconds for function %d\n", pid, cpu_id, elapsed_real_time, function_id);
-      printf("[pid %d cpu %d] User CPU time elapsed: %.6f seconds for function %d\n", pid, cpu_id, total_elapsed_user_time, function_id);
-      printf("[pid %d cpu %d] System CPU time: %.6f seconds for function %d\n\n", pid, cpu_id, total_elapsed_kernel_time,  function_id);
+      printf("[pid %d cpu %d] Real time elapsed: %.6f seconds for function %d at current time %.6f\n", pid, cpu_id, elapsed_real_time, function_id, time_now_about);
+      printf("[pid %d cpu %d] User CPU time elapsed: %.6f seconds for function %d at current time %.6f\n", pid, cpu_id, total_elapsed_user_time, function_id, time_now_about);
+      printf("[pid %d cpu %d] System CPU time: %.6f seconds for function %d at current time %.6f\n\n", pid, cpu_id, total_elapsed_kernel_time,  function_id, time_now_about);
   }
 }
 
